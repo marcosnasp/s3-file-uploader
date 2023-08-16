@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -48,13 +50,21 @@ public class S3UploaderApp extends Application {
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
-        File arquivo = fileChooser.showOpenDialog(primaryStage);
 
-        Button sendButton = new Button("Send");
-        sendButton.setOnAction(e -> sendToS3(accessKeyTextField.getText(), secretKeyPasswordField.getText(),
-                bucketNameTextField.getText(), keyNameTextField.getText(), arquivo));
+        Button sendButton = new Button("Selecionar e Enviar");
+        sendButton.setOnAction(
+                new EventHandler<ActionEvent>() {
+                    @Override
+                    public void handle(final ActionEvent e) {
+                        File arquivo = fileChooser.showOpenDialog(primaryStage);
+                        if (arquivo != null) {
+                            sendToS3(accessKeyTextField.getText(), secretKeyPasswordField.getText(),
+                                    bucketNameTextField.getText(), keyNameTextField.getText(), arquivo);
+                        }
+                    }
+                });
 
-        Button cancelButton = new Button("Cancel");
+        Button cancelButton = new Button("Cancelar");
         cancelButton.setOnAction(e -> primaryStage.close());
 
         gridPane.add(accessKeyLabel, 0, 0);
@@ -65,8 +75,8 @@ public class S3UploaderApp extends Application {
         gridPane.add(bucketNameTextField, 1, 2);
         gridPane.add(keyNameLabel, 0, 3);
         gridPane.add(keyNameTextField, 1, 3);
-        gridPane.add(sendButton, 1, 5);
-        gridPane.add(cancelButton, 1, 6);
+        gridPane.add(sendButton, 0, 5);
+        gridPane.add(cancelButton, 1, 5);
 
         Scene scene = new Scene(gridPane, 400, 250);
         primaryStage.setScene(scene);
